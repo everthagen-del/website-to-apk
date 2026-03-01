@@ -1,11 +1,19 @@
-*.iml
-.gradle
-./app/build
 # Android/Gradle caches
 .gradle/
 .gradle-cache/
 build/
 app/build/
+.cxx/
+
+# IDE bestanden
 .idea/
 *.iml
+*.ipr
+*.iws
+
+# Local configuratie
 local.properties
+
+# OS bestanden
+.DS_Store
+Thumbs.db
