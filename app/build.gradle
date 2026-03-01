@@ -18,11 +18,11 @@ allprojects {
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'com.myexample.webtoapk'
+    namespace 'com.domoticz.webtoapk'
 
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.myexample.webtoapk"
+        applicationId "com.domoticz.webtoapk"
         minSdkVersion 24
         targetSdkVersion 33
         versionCode 1

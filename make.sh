@@ -215,7 +215,7 @@ apk() {
     rm -f app/build/outputs/apk/release/app-release.apk
 
     info "Building APK..."
-    try "./gradlew assembleRelease --no-daemon --quiet"
+    try "./gradlew assembleRelease --no-daemon --quiet -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true"
 
     if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
         log "APK successfully built and signed"
