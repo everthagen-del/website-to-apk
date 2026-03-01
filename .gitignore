@@ -1,19 +1,37 @@
-# Android/Gradle caches
+# Android/Gradle
 .gradle/
 .gradle-cache/
 build/
 app/build/
 .cxx/
+captures/
+.externalNativeBuild/
 
-# IDE bestanden
+# IDE
 .idea/
 *.iml
 *.ipr
 *.iws
+.idea_modules/
+.atom/
+.vscode/
 
-# Local configuratie
-local.properties
-
-# OS bestanden
+# OS
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local
+local.properties
+keystore.properties
+debug.keystore
+google-services.json
+
+# Build
+*.apk
+*.aab
+*.jar
+*.class
+*.log
