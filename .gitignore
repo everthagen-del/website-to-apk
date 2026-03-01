@@ -1,3 +1,11 @@
 *.iml
 .gradle
 ./app/build
+# Android/Gradle caches
+.gradle/
+.gradle-cache/
+build/
+app/build/
+.idea/
+*.iml
+local.properties
