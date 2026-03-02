@@ -1,5 +1,5 @@
-import com.treinverstoringen.app.R;
 package com.treinverstoringen.app;
+import com.treinverstoringen.app.R;
 
 import android.os.Bundle;
 import android.webkit.WebSettings;
