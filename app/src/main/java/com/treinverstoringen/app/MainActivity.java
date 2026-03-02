@@ -19,15 +19,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        webView = findViewById(R.id.webView);  // LET OP: hoofdletter V!
+        webView = findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         
-        // Laad de URL uit config.json
         String url = loadUrlFromConfig();
-        
-        // Fallback als config.json niet bestaat
         if (url == null || url.isEmpty()) {
             url = "about:blank";
         }
