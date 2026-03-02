@@ -35,3 +35,8 @@ google-services.json
 *.jar
 *.class
 *.log
+
+# Configuratie bestanden (gevoelige data)
+app/src/main/assets/config.json
+webapk.conf
+*.backup
