@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    namespace 'com.treinverstoringen.app'
     compileSdk 33
     
     defaultConfig {
@@ -34,7 +35,6 @@ dependencies {
     
     // Media and notifications
     implementation 'androidx.media:media:1.6.0'
-    implementation 'androidx.core:core:1.9.0'
     
     // Firebase for push notifications
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
