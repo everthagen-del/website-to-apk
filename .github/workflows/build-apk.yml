@@ -1,4 +1,4 @@
-name: Android APK Build
+name: Treinverstoringen APK Build
 
 on:
   push:
@@ -29,7 +29,6 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-
-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -39,5 +38,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
+          name: treinverstoringen-apk
           path: app/build/outputs/apk/debug/*.apk
