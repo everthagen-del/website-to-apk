@@ -1,69 +1,50 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
-    namespace 'com.domoticz.webtoapk'
-
-    compileSdkVersion 33
+    compileSdk 33
+    
     defaultConfig {
         applicationId "com.treinverstoringen.app"
-        minSdkVersion 24
-        targetSdkVersion 33
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
     }
-
-    //Successtar Edit
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
-    signingConfigs {
-        release {
-            storeFile file("my-release-key.jks")
-            storePassword "123456"
-            keyAlias "my"
-            keyPassword "123456"
-        }
-    }
-
+    
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
+    // AndroidX basics
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core:1.9.0'
-    implementation 'org.unifiedpush.android:connector:3.0.10'
+    
+    // Media and notifications
     implementation 'androidx.media:media:1.6.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation 'androidx.core:core:1.9.0'
+    
+    // Firebase for push notifications
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    
+    // JSON processing
+    implementation 'org.json:json:20230227'
+    
+    // WebView support
+    implementation 'androidx.webkit:webkit:1.6.1'
 }
+
+// Add this at the bottom if you have a google-services.json file
+// apply plugin: 'com.google.gms.google-services'
