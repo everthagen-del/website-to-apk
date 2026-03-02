@@ -45,6 +45,3 @@ dependencies {
     // WebView support
     implementation 'androidx.webkit:webkit:1.6.1'
 }
-
-// Add this at the bottom if you have a google-services.json file
-// apply plugin: 'com.google.gms.google-services'
