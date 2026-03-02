@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Android APK Build
 
 on:
   push:
@@ -26,11 +26,15 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper/
-          key: gradle-${{ hashFiles(**/*.gradle*, **/gradle-wrapper.properties) }}
-          restore-keys: gradle-
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Build APK
-        run: ./gradlew assembleRelease --no-daemon -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
