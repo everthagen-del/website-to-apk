@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        webView = findViewById(R.id.webview);
+        webView = findViewById(R.id.webView);  // LET OP: hoofdletter V!
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         // Laad de URL uit config.json
         String url = loadUrlFromConfig();
         
-        // Als er geen config is, gebruik dan een fallback (leeg)
+        // Fallback als config.json niet bestaat
         if (url == null || url.isEmpty()) {
             url = "about:blank";
         }
@@ -36,16 +36,12 @@ public class MainActivity extends AppCompatActivity {
     
     private String loadUrlFromConfig() {
         try {
-            // Open config.json uit de assets map
             InputStream is = getAssets().open("config.json");
             Scanner scanner = new Scanner(is, "UTF-8").useDelimiter("\\A");
             String jsonString = scanner.hasNext() ? scanner.next() : "";
             scanner.close();
-            
-            // Parse de JSON
             JSONObject config = new JSONObject(jsonString);
             return config.getString("dashboardUrl");
-            
         } catch (Exception e) {
             e.printStackTrace();
             return null;
