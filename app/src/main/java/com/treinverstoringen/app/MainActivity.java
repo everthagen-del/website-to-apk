@@ -1,4 +1,5 @@
 package com.treinverstoringen.app;
+import com.treinverstoringen.app.R;
 
 import android.os.Bundle;
 import android.webkit.WebSettings;
@@ -20,10 +21,60 @@ public class MainActivity extends AppCompatActivity {
         
         webView = findViewById(R.id.webView);
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
         
+        // ULTIMATE WEBVIEW OPTIMALISATIES - Zo snel als Chrome!
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  // Eerst cache, dan netwerk
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setLoadsImagesAutomatically(true);
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webSettings.setBlockNetworkLoads(false);
+        webSettings.setSupportZoom(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
+        
+        // Hardware versnelling forceren (voor soepel scrollen)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
+        } else {
+            webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        }
+        
+        // Betere scroll ervaring
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        
+        // Aangepaste WebViewClient voor extra optimalisaties
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Voer JavaScript uit om de pagina direct klaar te maken
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    webView.evaluateJavascript(
+                        "if(document.documentElement) { " +
+                        "document.documentElement.style.webkitTouchCallout = 'none'; " +
+                        "document.documentElement.style.webkitUserSelect = 'none'; " +
+                        "}", null);
+                }
+            }
+            
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // Blijf in de WebView voor alle links
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        
+        // Laad de URL uit config.json
         String url = loadUrlFromConfig();
+        
         if (url == null || url.isEmpty()) {
             url = "about:blank";
         }
