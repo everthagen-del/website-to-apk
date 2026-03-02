@@ -1,5 +1,4 @@
 package com.treinverstoringen.app;
-import com.treinverstoringen.app.R;
 
 import android.app.Notification;
 import android.app.PendingIntent;
