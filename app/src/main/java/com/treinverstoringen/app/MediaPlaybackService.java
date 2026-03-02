@@ -1,3 +1,4 @@
+import com.treinverstoringen.app.R;
 package com.treinverstoringen.app;
 
 import android.app.Notification;
