@@ -1,4 +1,4 @@
-package com.domoticz.webtoapk;
+package com.treinverstoringen.app;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -37,20 +37,20 @@ import java.util.concurrent.Executors;
 
 public class MediaPlaybackService extends Service {
     public static final String NOTIFICATION_CHANNEL_ID = "web_app_notifications";
-    public static final String ACTION_UPDATE_METADATA = "com.domoticz.webtoapk.UPDATE_METADATA";
-    public static final String ACTION_UPDATE_STATE = "com.domoticz.webtoapk.UPDATE_STATE";
-    public static final String ACTION_SET_HANDLERS = "com.domoticz.webtoapk.SET_HANDLERS";
-    public static final String ACTION_STOP_SERVICE = "com.domoticz.webtoapk.STOP_SERVICE";
-    public static final String ACTION_UPDATE_POSITION = "com.domoticz.webtoapk.UPDATE_POSITION";
+    public static final String ACTION_UPDATE_METADATA = "com.treinverstoringen.app.UPDATE_METADATA";
+    public static final String ACTION_UPDATE_STATE = "com.treinverstoringen.app.UPDATE_STATE";
+    public static final String ACTION_SET_HANDLERS = "com.treinverstoringen.app.SET_HANDLERS";
+    public static final String ACTION_STOP_SERVICE = "com.treinverstoringen.app.STOP_SERVICE";
+    public static final String ACTION_UPDATE_POSITION = "com.treinverstoringen.app.UPDATE_POSITION";
 
     // Actions from notification buttons
-    public static final String ACTION_PLAY = "com.domoticz.webtoapk.PLAY";
-    public static final String ACTION_PAUSE = "com.domoticz.webtoapk.PAUSE";
-    public static final String ACTION_NEXT = "com.domoticz.webtoapk.NEXT";
-    public static final String ACTION_PREVIOUS = "com.domoticz.webtoapk.PREVIOUS";
+    public static final String ACTION_PLAY = "com.treinverstoringen.app.PLAY";
+    public static final String ACTION_PAUSE = "com.treinverstoringen.app.PAUSE";
+    public static final String ACTION_NEXT = "com.treinverstoringen.app.NEXT";
+    public static final String ACTION_PREVIOUS = "com.treinverstoringen.app.PREVIOUS";
 
     // Action for broadcasting to MainActivity
-    public static final String BROADCAST_MEDIA_ACTION = "com.domoticz.webtoapk.BROADCAST_MEDIA_ACTION";
+    public static final String BROADCAST_MEDIA_ACTION = "com.treinverstoringen.app.BROADCAST_MEDIA_ACTION";
     public static final String EXTRA_MEDIA_ACTION = "EXTRA_MEDIA_ACTION";
 
 

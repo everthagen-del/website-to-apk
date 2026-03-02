@@ -22,7 +22,7 @@ android {
 
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.domoticz.webtoapk"
+        applicationId "com.treinverstoringen.app"
         minSdkVersion 24
         targetSdkVersion 33
         versionCode 1

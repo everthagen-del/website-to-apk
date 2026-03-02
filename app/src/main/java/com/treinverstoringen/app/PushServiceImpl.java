@@ -1,4 +1,4 @@
-package com.domoticz.webtoapk; 
+package com.treinverstoringen.app; 
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +56,7 @@ public class PushServiceImpl extends PushService {
             .apply();
 
         // Broadcast the new endpoint AND keys to the MainActivity
-        Intent intent = new Intent("com.domoticz.webtoapk.NEW_ENDPOINT");
+        Intent intent = new Intent("com.treinverstoringen.app.NEW_ENDPOINT");
         intent.putExtra("endpoint", endpointUrl);
         intent.putExtra("p256dh", p256dh);
         intent.putExtra("auth", auth);

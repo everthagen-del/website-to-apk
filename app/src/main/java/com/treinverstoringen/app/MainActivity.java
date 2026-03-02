@@ -1,4 +1,4 @@
-package com.domoticz.webtoapk;
+package com.treinverstoringen.app;
 
 import android.os.Bundle;
 import android.webkit.WebSettings;
