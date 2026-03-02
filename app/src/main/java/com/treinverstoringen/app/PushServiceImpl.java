@@ -1,5 +1,4 @@
 package com.treinverstoringen.app; 
-import com.treinverstoringen.app.R;
 
 import android.content.Context;
 import android.content.Intent;
