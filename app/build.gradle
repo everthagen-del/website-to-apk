@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace 'com.treinverstoringen.app'
@@ -27,21 +26,11 @@ android {
 }
 
 dependencies {
-    // AndroidX basics
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core:1.9.0'
-    
-    // Media and notifications
     implementation 'androidx.media:media:1.6.0'
-    
-    // Firebase for push notifications
-    implementation 'com.google.firebase:firebase-messaging:23.1.2'
-    
-    // JSON processing
     implementation 'org.json:json:20230227'
-    
-    // WebView support
     implementation 'androidx.webkit:webkit:1.6.1'
 }
