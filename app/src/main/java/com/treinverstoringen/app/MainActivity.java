@@ -21,15 +21,20 @@ public class MainActivity extends AppCompatActivity {
     private Handler timeoutHandler = new Handler();
     private Runnable timeoutRunnable;
 
+    // === NIEUW: Automatisch verversen ===
+    private Handler refreshHandler = new Handler();
+    private Runnable refreshRunnable;
+    private static final int REFRESH_INTERVAL = 60000; // 60.000 ms = 60 seconden
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        progressBar = findViewById(R.id.progressBar); // Zorg dat dit ID in je layout zit!
+        progressBar = findViewById(R.id.progressBar);
 
-        // --- WebView instellingen (zoals je al had) ---
+        // WebView instellingen
         WebSettings webSettings = webView.getSettings();
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
@@ -45,35 +50,33 @@ public class MainActivity extends AppCompatActivity {
             webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
         }
 
-        // ===== DE FIX VOOR HET DRAAIENDE LAADRONDJE =====
+        // WebViewClient met timeout
         webView.setWebViewClient(new WebViewClient() {
-
-            // 1. Laadrondje verschijnt en timer start
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                progressBar.setVisibility(View.VISIBLE); // Rondje ZICHTBAAR
+                progressBar.setVisibility(View.VISIBLE);
 
-                // Stel een time-out in (bijv. 5 seconden)
                 timeoutRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        // Als de time-out afloopt, verberg het rondje en stop het laden
                         progressBar.setVisibility(View.GONE);
-                        webView.stopLoading(); // Stopt als de pagina blijft hangen
+                        webView.stopLoading();
                     }
                 };
-                timeoutHandler.postDelayed(timeoutRunnable, 5000); // 5000ms = 5 sec
+                timeoutHandler.postDelayed(timeoutRunnable, 5000);
             }
 
-            // 2. Laadrondje verdwijnt en timer stopt
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                progressBar.setVisibility(View.GONE); // Rondje ONZICHTBAAR
-                timeoutHandler.removeCallbacks(timeoutRunnable); // Timer annuleren
+                progressBar.setVisibility(View.GONE);
+                timeoutHandler.removeCallbacks(timeoutRunnable);
             }
         });
+
+        // === NIEUW: Start automatisch verversen ===
+        startAutoRefresh();
 
         // Laad de URL
         String url = loadUrlFromConfig();
@@ -82,7 +85,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ===== Afstandsbediening navigatie (jouw code) =====
+    // === NIEUW: Methode om automatisch verversen te starten ===
+    private void startAutoRefresh() {
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (webView != null) {
+                    webView.reload(); // Ververs de pagina
+                }
+                // Plan de volgende refresh over 60 seconden
+                refreshHandler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        };
+        refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL);
+    }
+
+    // === NIEUW: Stop verversen als app op de achtergrond gaat ===
+    @Override
+    protected void onPause() {
+        super.onPause();
+        refreshHandler.removeCallbacks(refreshRunnable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startAutoRefresh(); // Herstart verversen als app weer actief wordt
+    }
+
+    // Afstandsbediening navigatie (jouw code)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP ||
@@ -110,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyUp(keyCode, event);
     }
 
-    // ===== URL uit config.json lezen (jouw code) =====
+    // URL uit config.json lezen
     private String loadUrlFromConfig() {
         try {
             InputStream is = getAssets().open("config.json");
