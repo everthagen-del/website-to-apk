@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
     private Handler timeoutHandler = new Handler();
     private Runnable timeoutRunnable;
 
-    // === NIEUW: Automatisch verversen ===
+    // Automatisch verversen
     private Handler refreshHandler = new Handler();
     private Runnable refreshRunnable;
-    private static final int REFRESH_INTERVAL = 60000; // 60.000 ms = 60 seconden
+    private static final int REFRESH_INTERVAL = 60000; // 60 seconden
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // === NIEUW: Start automatisch verversen ===
+        // Start automatisch verversen
         startAutoRefresh();
 
         // Laad de URL
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // === NIEUW: Methode om automatisch verversen te starten ===
+    // Automatisch verversen starten
     private void startAutoRefresh() {
         refreshRunnable = new Runnable() {
             @Override
@@ -93,14 +93,13 @@ public class MainActivity extends AppCompatActivity {
                 if (webView != null) {
                     webView.reload(); // Ververs de pagina
                 }
-                // Plan de volgende refresh over 60 seconden
                 refreshHandler.postDelayed(this, REFRESH_INTERVAL);
             }
         };
         refreshHandler.postDelayed(refreshRunnable, REFRESH_INTERVAL);
     }
 
-    // === NIEUW: Stop verversen als app op de achtergrond gaat ===
+    // Stop verversen als app op achtergrond gaat
     @Override
     protected void onPause() {
         super.onPause();
@@ -110,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startAutoRefresh(); // Herstart verversen als app weer actief wordt
+        startAutoRefresh(); // Herstart verversen
     }
 
-    // Afstandsbediening navigatie (jouw code)
+    // Afstandsbediening navigatie
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP ||
@@ -130,11 +129,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    // ===== OPTIE 3: ECHT AFSLUITEN BIJ TERUG-KNOP =====
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (webView.canGoBack()) {
                 webView.goBack();
+                return true;
+            } else {
+                // ECHT afsluiten op hoofdpagina
+                finishAffinity(); // Sluit alle activiteiten
                 return true;
             }
         }
