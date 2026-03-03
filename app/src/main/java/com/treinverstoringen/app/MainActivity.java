@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 3. Sluit de app direct af (zodat de gebruiker alleen de browser ziet)
-        finish();
+        // finish();
     }
 
     private String loadUrlFromConfig() {
