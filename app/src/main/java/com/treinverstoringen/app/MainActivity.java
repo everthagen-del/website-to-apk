@@ -1,9 +1,13 @@
 package com.treinverstoringen.app;
+import com.treinverstoringen.app.R;
 
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.appcompat.app.AppCompatActivity;
+import org.json.JSONObject;
+import java.io.InputStream;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,10 +15,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Heel simpel: open Google
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
-        startActivity(browserIntent);
+        // Lees URL uit config.json
+        String url = loadUrlFromConfig();
         
-        // App mag op de achtergrond blijven
+        // Als er een URL is, open hem
+        if (url != null && !url.isEmpty()) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(browserIntent);
+        }
+    }
+    
+    private String loadUrlFromConfig() {
+        try {
+            InputStream is = getAssets().open("config.json");
+            Scanner scanner = new Scanner(is, "UTF-8").useDelimiter("\\A");
+            String jsonString = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+            JSONObject config = new JSONObject(jsonString);
+            return config.getString("dashboardUrl");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
