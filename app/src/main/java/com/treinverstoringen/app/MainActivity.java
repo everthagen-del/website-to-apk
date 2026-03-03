@@ -1,10 +1,12 @@
 package com.treinverstoringen.app;
 import com.treinverstoringen.app.R;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -40,14 +42,21 @@ public class MainActivity extends AppCompatActivity {
         webView.setFocusableInTouchMode(true);
         webView.requestFocus();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        
+        // === CACHE INSTELLINGEN AANPASSEN ===
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // NIET uit cache laden
         webSettings.setDomStorageEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setSupportZoom(false);
         webSettings.setMediaPlaybackRequiresUserGesture(false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        
+        // Cache volledig uitschakelen
+        webView.clearCache(true); // Wis cache bij start
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
+            CookieManager.getInstance().removeAllCookies(null); // Wis cookies
         }
 
         // WebViewClient met timeout
@@ -85,13 +94,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Automatisch verversen starten
+    // === NIEUWE METHODE: Cache wissen voor refresh ===
+    private void clearCacheAndReload() {
+        if (webView != null) {
+            // Wis alle caches
+            webView.clearCache(true);
+            webView.clearHistory();
+            
+            // Wis cookies (voor Android 5+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                CookieManager.getInstance().removeAllCookies(null);
+                CookieManager.getInstance().flush();
+            }
+            
+            // Laad de pagina opnieuw
+            String url = loadUrlFromConfig();
+            if (url != null && !url.isEmpty()) {
+                webView.loadUrl(url);
+            }
+        }
+    }
+
+    // Aangepaste auto-refresh met cache wissen
     private void startAutoRefresh() {
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
                 if (webView != null) {
-                    webView.reload(); // Ververs de pagina
+                    clearCacheAndReload(); // Wis cache EN herlaad
                 }
                 refreshHandler.postDelayed(this, REFRESH_INTERVAL);
             }
@@ -109,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startAutoRefresh(); // Herstart verversen
+        startAutoRefresh();
     }
 
     // Afstandsbediening navigatie
@@ -129,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    // ===== OPTIE 3: ECHT AFSLUITEN BIJ TERUG-KNOP =====
+    // OPTIE 3: Echt afsluiten bij terug-knop
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -137,8 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 webView.goBack();
                 return true;
             } else {
-                // ECHT afsluiten op hoofdpagina
-                finishAffinity(); // Sluit alle activiteiten
+                finishAffinity();
                 return true;
             }
         }
