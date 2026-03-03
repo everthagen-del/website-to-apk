@@ -2,11 +2,13 @@ package com.treinverstoringen.app;
 import com.treinverstoringen.app.R;
 
 import android.os.Bundle;
-import android.os.Build;
+import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONObject;
 import java.io.InputStream;
@@ -15,6 +17,9 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
+    private ProgressBar progressBar;
+    private Handler timeoutHandler = new Handler();
+    private Runnable timeoutRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,55 +27,70 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        WebSettings webSettings = webView.getSettings();
+        progressBar = findViewById(R.id.progressBar); // Zorg dat dit ID in je layout zit!
 
-        // ===== TV-OPTIMALISATIES =====
-        // 1. Navigatie met afstandsbediening inschakelen
+        // --- WebView instellingen (zoals je al had) ---
+        WebSettings webSettings = webView.getSettings();
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
         webView.requestFocus();
-
-        // 2. JavaScript (altijd nodig)
         webSettings.setJavaScriptEnabled(true);
-
-        // 3. Snelle caching
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setDomStorageEnabled(true);
-
-        // 4. Belangrijk voor TV: schaal de website goed
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
-        webSettings.setSupportZoom(false); // Uit voor TV
-
-        // 5. HTML5 video/fullscreen ondersteuning
-        webSettings.setMediaPlaybackRequiresUserGesture(false); // Video automatisch starten
-
-        // 6. Hardware versnelling (voor soepele ervaring)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        webSettings.setSupportZoom(false);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
         }
 
-        // 7. Aangepaste WebViewClient om links in de WebView te houden
-        webView.setWebViewClient(new WebViewClient());
+        // ===== DE FIX VOOR HET DRAAIENDE LAADRONDJE =====
+        webView.setWebViewClient(new WebViewClient() {
 
-        // Laad de URL uit config.json
+            // 1. Laadrondje verschijnt en timer start
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE); // Rondje ZICHTBAAR
+
+                // Stel een time-out in (bijv. 5 seconden)
+                timeoutRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // Als de time-out afloopt, verberg het rondje en stop het laden
+                        progressBar.setVisibility(View.GONE);
+                        webView.stopLoading(); // Stopt als de pagina blijft hangen
+                    }
+                };
+                timeoutHandler.postDelayed(timeoutRunnable, 5000); // 5000ms = 5 sec
+            }
+
+            // 2. Laadrondje verdwijnt en timer stopt
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.GONE); // Rondje ONZICHTBAAR
+                timeoutHandler.removeCallbacks(timeoutRunnable); // Timer annuleren
+            }
+        });
+
+        // Laad de URL
         String url = loadUrlFromConfig();
         if (url != null && !url.isEmpty()) {
             webView.loadUrl(url);
         }
     }
 
-    // ===== BELANGRIJK VOOR TV: Afstandsbediening =====
+    // ===== Afstandsbediening navigatie (jouw code) =====
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // DPAD-knoppen doorsturen naar WebView
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP ||
             keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
             keyCode == KeyEvent.KEYCODE_DPAD_LEFT ||
             keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ||
             keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||
             keyCode == KeyEvent.KEYCODE_ENTER) {
-            
             if (webView != null) {
                 webView.onKeyDown(keyCode, event);
                 return true;
@@ -81,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        // Terug-knop: ga terug in webgeschiedenis of sluit app
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (webView.canGoBack()) {
                 webView.goBack();
@@ -91,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyUp(keyCode, event);
     }
 
+    // ===== URL uit config.json lezen (jouw code) =====
     private String loadUrlFromConfig() {
         try {
             InputStream is = getAssets().open("config.json");
